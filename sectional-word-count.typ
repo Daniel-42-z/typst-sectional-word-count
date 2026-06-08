@@ -48,8 +48,8 @@
     }
   }
 
-  my-word-count(total => {
-    align(right)[Total word count: #total.words <no-wc>]
-    result
-  })
+  my-word-count(total => [
+    #align(right)[Total word count: #total.words]<no-wc>
+    #result
+  ])
 }
