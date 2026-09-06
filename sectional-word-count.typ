@@ -2,9 +2,10 @@
 
 #let my-word-count = word-count.with(exclude: (
   <no-wc>,
-  figure.caption,
+  figure,
   bibliography,
   heading,
+  math.equation,
 ))
 
 #let with-sectional-word-count(body) = {
@@ -36,10 +37,12 @@
       if group.heading != none {
         let hdg = group.heading
         my-word-count(total => {
-          heading(depth: hdg.depth, [#hdg.body #h(1fr) #text(
-              weight: "regular",
-              size: 11pt,
-            )[(#total.words words)]])
+          block(width: 100%)[
+            #hdg
+            #place(top + right, dy: 0.15em)[
+              #text(weight: "regular", size: 11pt)[(#total.words words)]
+            ]
+          ]
           group.body.join()
         })
       } else {
