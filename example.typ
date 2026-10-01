@@ -6,11 +6,11 @@
 
 Words not counted before the show rule applies
 
-#show: with-sectional-word-count
+#show: with-sectional-word-count.with(exclude: (emph,))
 
 = Section 1
 
-Word word word
+Word word word #emph[not counted]
 
 = Section 2
 

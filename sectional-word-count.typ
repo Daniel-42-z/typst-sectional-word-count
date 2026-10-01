@@ -1,14 +1,17 @@
 #import "@preview/wordometer:0.1.5": word-count
 
-#let my-word-count = word-count.with(exclude: (
+#let default-exclude = (
   <no-wc>,
-  figure,
+  figure.where(kind: image),
+  figure.where(kind: table),
+  figure.where(kind: raw),
   bibliography,
   heading,
   math.equation,
-))
+)
 
-#let with-sectional-word-count(body) = {
+#let with-sectional-word-count(body, exclude: ()) = {
+  let my-word-count = word-count.with(exclude: default-exclude + exclude)
   let groups = ()
   let current-group = ()
   let current-heading = none
@@ -37,11 +40,28 @@
       if group.heading != none {
         let hdg = group.heading
         my-word-count(total => {
+          let count-label = [#text(
+            weight: "regular",
+            size: 11pt,
+          )[(#total.words words)] <no-wc>]
           block(width: 100%)[
-            #hdg
-            #place(top + right, dy: 0.15em)[
-              #text(weight: "regular", size: 11pt)[(#total.words words)]
-            ]
+            #layout(size => {
+              let gap = 0.5 * measure(text(size: 11pt)[M]).height
+              let heading-width = calc.max(
+                0pt,
+                size.width - measure(count-label).width - gap,
+              )
+              let full-height = measure(width: size.width, hdg).height
+              let overlay-height = measure(width: heading-width, hdg).height
+
+              if full-height == overlay-height {
+                block(width: heading-width)[#hdg]
+                place(bottom + right, dy: -0.15em)[#count-label]
+              } else {
+                hdg
+                align(right)[#count-label]
+              }
+            })
           ]
           group.body.join()
         })
